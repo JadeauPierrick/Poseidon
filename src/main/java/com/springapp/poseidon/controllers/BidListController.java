@@ -2,6 +2,7 @@ package com.springapp.poseidon.controllers;
 
 import com.springapp.poseidon.domain.BidList;
 import com.springapp.poseidon.service.BidListService;
+import com.springapp.poseidon.service.GetUserInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.security.Principal;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 @Slf4j
 @Controller
@@ -19,14 +23,18 @@ public class BidListController {
 
     private final BidListService bidListService;
 
-    public BidListController(BidListService bidListService) {
+    private final GetUserInfoService getUserInfoService;
+
+    public BidListController(BidListService bidListService, GetUserInfoService getUserInfoService) {
         this.bidListService = bidListService;
+        this.getUserInfoService = getUserInfoService;
     }
 
     @RequestMapping("/bidList/list")
-    public String home(Model model) {
+    public String home(Model model, Principal user) {
         log.info("Get all the bids");
         model.addAttribute("bidLists", bidListService.getBidLists());
+        model.addAttribute("userInfo", getUserInfoService.getUserInfo(user));
         return "bidList/list";
     }
 
@@ -40,6 +48,8 @@ public class BidListController {
     public String validate(@Valid BidList bid, BindingResult result, Model model) {
         log.info("Validate the bid added");
         if(!result.hasErrors()) {
+            Timestamp date = Timestamp.from(Instant.now());
+            bid.setCreationDate(date);
             bidListService.addBid(bid);
             model.addAttribute("bidLists", bidListService.getBidLists());
             return "redirect:/bidList/list";

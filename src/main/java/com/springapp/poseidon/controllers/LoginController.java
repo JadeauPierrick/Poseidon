@@ -1,6 +1,6 @@
 package com.springapp.poseidon.controllers;
 
-import com.springapp.poseidon.repositories.UserRepository;
+import com.springapp.poseidon.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class LoginController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping("login")
     public ModelAndView login() {
@@ -24,7 +24,7 @@ public class LoginController {
     @GetMapping("secure/article-details")
     public ModelAndView getAllUserArticles() {
         ModelAndView mav = new ModelAndView();
-        mav.addObject("users", userRepository.findAll());
+        mav.addObject("users", userService.getUsers());
         mav.setViewName("user/list");
         return mav;
     }

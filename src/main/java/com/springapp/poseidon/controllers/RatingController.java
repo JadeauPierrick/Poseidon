@@ -1,6 +1,7 @@
 package com.springapp.poseidon.controllers;
 
 import com.springapp.poseidon.domain.Rating;
+import com.springapp.poseidon.service.GetUserInfoService;
 import com.springapp.poseidon.service.RatingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @Slf4j
 @Controller
@@ -19,14 +21,18 @@ public class RatingController {
 
     private final RatingService ratingService;
 
-    public RatingController(RatingService ratingService) {
+    private final GetUserInfoService getUserInfoService;
+
+    public RatingController(RatingService ratingService, GetUserInfoService getUserInfoService) {
         this.ratingService = ratingService;
+        this.getUserInfoService = getUserInfoService;
     }
 
     @RequestMapping("/rating/list")
-    public String home(Model model) {
+    public String home(Model model, Principal user) {
         log.info("Get all the ratings");
         model.addAttribute("ratingsList", ratingService.getRatings());
+        model.addAttribute("userInfo", getUserInfoService.getUserInfo(user));
         return "rating/list";
     }
 

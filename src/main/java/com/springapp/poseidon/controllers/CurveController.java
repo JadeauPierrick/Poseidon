@@ -2,6 +2,7 @@ package com.springapp.poseidon.controllers;
 
 import com.springapp.poseidon.domain.CurvePoint;
 import com.springapp.poseidon.service.CurvePointService;
+import com.springapp.poseidon.service.GetUserInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.security.Principal;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 @Slf4j
 @Controller
@@ -19,14 +23,18 @@ public class CurveController {
 
     private final CurvePointService curvePointService;
 
-    public CurveController(CurvePointService curvePointService) {
+    private final GetUserInfoService getUserInfoService;
+
+    public CurveController(CurvePointService curvePointService, GetUserInfoService getUserInfoService) {
         this.curvePointService = curvePointService;
+        this.getUserInfoService = getUserInfoService;
     }
 
     @RequestMapping("/curvePoint/list")
-    public String home(Model model) {
+    public String home(Model model, Principal user) {
         log.info("Get all the curve points");
         model.addAttribute("curvesList", curvePointService.getCurvePoints());
+        model.addAttribute("userInfo", getUserInfoService.getUserInfo(user));
         return "curvePoint/list";
     }
 
@@ -40,6 +48,8 @@ public class CurveController {
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
         log.info("Validate the curve point added");
         if (!result.hasErrors()) {
+            Timestamp date = Timestamp.from(Instant.now());
+            curvePoint.setCreationDate(date);
             curvePointService.addCurvePoint(curvePoint);
             model.addAttribute("curvesList", curvePointService.getCurvePoints());
             return "redirect:/curvePoint/list";
