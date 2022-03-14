@@ -17,7 +17,6 @@ import java.sql.Timestamp;
 public class BidList {
 
     @Id
-    @Digits(integer = 4, fraction = 0)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int bidListId;
 

@@ -45,8 +45,8 @@
 					<td th:text="${rating.fitchRating}"></td>
 					<td th:text="${rating.orderNumber}"></td>
 					<td style="width: 15%" class="text-center">
-						<a th:ref="@{/rating/update/{id}(id=${rating.id})}">Edit</a>&nbsp;|&nbsp;
-						<a th:ref="@{/rating/delete/{id}(id=${rating.id})}">Delete</a>
+						<a th:href="@{/rating/update/{id}(id=${rating.id})}">Edit</a>&nbsp;|&nbsp;
+						<a th:href="@{/rating/delete/{id}(id=${rating.id})}">Delete</a>
 					</td>
 				</tr>
 			<!-- TODO: Show all Rating to the table, the Action column will have Edit & Delete buttons -->
